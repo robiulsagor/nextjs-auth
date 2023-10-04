@@ -1,12 +1,17 @@
 "use client"
 
+import { signIn } from "next-auth/react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 const Login = () => {
     const [user, setUser] = useState({
         name: '', email: '', password: '', error: false, loading: false
     })
+
+    const router = useRouter()
+
     const handleSubmit = async e => {
         e.preventDefault()
 
@@ -16,6 +21,22 @@ const Login = () => {
         }
         setUser({ ...user, error: false })
 
+        try {
+            const res = await signIn('credentials', {
+                email: user.email,
+                password: user.password,
+                redirect: false
+            })
+
+            if (res.error) {
+                setUser({ ...user, error: "Invalid credientials!!" })
+                return;
+            }
+
+            router.replace('dashboard')
+        } catch (error) {
+
+        }
     }
     return (
         <div className='w-full h-screen flex items-center justify-center bg-slate-100'>

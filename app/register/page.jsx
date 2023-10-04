@@ -21,7 +21,15 @@ const Register = () => {
             return
         }
         setUser({ ...user, error: false, loading: true })
+
         try {
+            const userRes = await axios.post('/api/userExists', JSON.stringify(user))
+            console.log(userRes.data);
+            if (userRes.data.user) {
+                setUser({ ...user, error: "User already exists!", loading: false })
+                return;
+            }
+
             const res = await axios.post('/api/register', user)
 
             setUser({ ...user, loading: false })
